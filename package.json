@@ -1,0 +1,9 @@
+{
+  "name": "demo-samples",
+  "version": "1.0.0",
+  "description": "Chainrails integration demo samples",
+  "main": "index.js",
+  "repository": "https://github.com/horuslabsio/chainrails-demo",
+  "author": "Darlington02 <darlingtonnnam@gmail.com>",
+  "license": "MIT"
+}
