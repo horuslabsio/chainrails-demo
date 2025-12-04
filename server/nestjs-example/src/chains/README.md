@@ -39,7 +39,7 @@ curl http://localhost:3000/chains/ETHEREUM_MAINNET
 | `GET /chains` | Get all supported chains | `/chains` |
 | `GET /chains/environment/:env` | Filter by testnet/mainnet | `/chains/environment/testnet` |
 | `GET /chains/:chainName` | Get specific chain details | `/chains/ETHEREUM_MAINNET` |
-| `GET /chains/token` | Chains supporting a token | `/chains/USDC` |
+| `GET /chains/token` | Chains supporting a token | `/chains/BASE_MAINNET/tokens` |
 
 ## Common Use Cases
 
@@ -82,7 +82,3 @@ const mainnetChains = await chainsService.getChainsByEnvironment('mainnet');
 
 - `cr_test_xxx` API keys → Use testnet chains only (supports mainnet too, for chains with no testnet support)
 - `cr_live_xxx` API keys → Use mainnet chains only
-
-## Next Steps
-
-Now that you understand chains, you can continue to the `quotes-and-routes` module to learn about quotes and routing.

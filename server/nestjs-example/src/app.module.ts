@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChainsModule } from './chains/chains.module';
+import { QuotesAndRoutesModule } from './quotes-and-routes/quotes-and-routes.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ChainsModule } from './chains/chains.module';
       envFilePath: '.env',
     }),
     ChainsModule,
+    QuotesAndRoutesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

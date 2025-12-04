@@ -21,7 +21,13 @@
     "example:chains": "curl http://localhost:3000/chains",
     "example:chains:testnet": "curl http://localhost:3000/chains/environment/testnet",
     "example:chains:mainnet": "curl http://localhost:3000/chains/environment/mainnet",
-    "example:chains:supported_tokens": "curl http://localhost:3000/chains/BASE_MAINNET/tokens"
+    "example:chains:supported_tokens": "curl http://localhost:3000/chains/BASE_MAINNET/tokens",
+    "example:quote:single": "curl 'http://localhost:3000/quotes-and-routes/single?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000&bridge=CCTP'",
+    "example:quote:multiple": "curl 'http://localhost:3000/quotes-and-routes/multiple?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000'",
+    "example:quote:best": "curl 'http://localhost:3000/quotes-and-routes/best?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000'",
+    "example:route:optimal": "curl 'http://localhost:3000/quotes-and-routes/optimal-route?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000'",
+    "example:route:supported-bridges": "curl 'http://localhost:3000/quotes-and-routes/supported-bridges?sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET'",
+    "example:quote:multi-source": "curl 'http://localhost:3000/quotes-and-routes/multi-source?destinationChain=ARBITRUM_TESTNET&amount=1000000&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
