@@ -27,7 +27,11 @@
     "example:quote:best": "curl 'http://localhost:3000/quotes-and-routes/best?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000'",
     "example:route:optimal": "curl 'http://localhost:3000/quotes-and-routes/optimal-route?tokenIn=0x036CbD53842c5426634e7929541eC2318f3dCF7e&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET&amount=1000000'",
     "example:route:supported-bridges": "curl 'http://localhost:3000/quotes-and-routes/supported-bridges?sourceChain=BASE_TESTNET&destinationChain=ARBITRUM_TESTNET'",
-    "example:quote:multi-source": "curl 'http://localhost:3000/quotes-and-routes/multi-source?destinationChain=ARBITRUM_TESTNET&amount=1000000&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'"
+    "example:quote:multi-source": "curl 'http://localhost:3000/quotes-and-routes/multi-source?destinationChain=ARBITRUM_TESTNET&amount=1000000&tokenOut=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'",
+    "example:intent:create": "curl -X POST http://localhost:3000/intents -H 'Content-Type: application/json' -d '{\"amount\":1000000,\"tokenIn\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"sourceChain\":\"BASE_MAINNET\",\"destinationChain\":\"ARBITRUM_MAINNET\",\"recipient\":\"0xda3ecb2e5362295e2b802669dd47127a61d9ce54\",\"sender\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\",\"refundAddress\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\"}'",
+    "example:intent:status": "curl http://localhost:3000/intents/1",
+    "example:intent:user": "curl http://localhost:3000/intents/user/0xb79541be080a59fdce6c0b43219ba56c725ec65e",
+    "example:intent:all": "curl 'http://localhost:3000/intents?limit=10&offset=0'"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

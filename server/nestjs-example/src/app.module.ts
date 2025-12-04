@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChainsModule } from './chains/chains.module';
 import { QuotesAndRoutesModule } from './quotes-and-routes/quotes-and-routes.module';
+import { IntentsModule } from './intents/intents.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { QuotesAndRoutesModule } from './quotes-and-routes/quotes-and-routes.mod
     }),
     ChainsModule,
     QuotesAndRoutesModule,
+    IntentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
