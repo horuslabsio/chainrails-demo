@@ -17,10 +17,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "example:chains": "curl http://localhost:3000/chains",
+    "example:chains:testnet": "curl http://localhost:3000/chains/environment/testnet",
+    "example:chains:mainnet": "curl http://localhost:3000/chains/environment/mainnet",
+    "example:chains:supported_tokens": "curl http://localhost:3000/chains/BASE_MAINNET/tokens"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "reflect-metadata": "^0.2.0",
