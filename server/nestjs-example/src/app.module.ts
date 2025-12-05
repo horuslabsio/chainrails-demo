@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { ChainsModule } from './chains/chains.module';
 import { QuotesAndRoutesModule } from './quotes-and-routes/quotes-and-routes.module';
 import { IntentsModule } from './intents/intents.module';
+import { AppModule as CompleteAppModule } from './app/app.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { IntentsModule } from './intents/intents.module';
     ChainsModule,
     QuotesAndRoutesModule,
     IntentsModule,
+    CompleteAppModule,
   ],
   controllers: [AppController],
   providers: [AppService],
