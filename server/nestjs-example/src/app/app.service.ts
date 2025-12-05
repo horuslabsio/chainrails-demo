@@ -1,6 +1,6 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createHmac, timingSafeEqual } from 'crypto';
+import { createHmac } from 'crypto';
 import { ChainsService } from '../chains/chains.service';
 import { QuotesAndRoutesService } from '../quotes-and-routes/quotes-and-routes.service';
 import { IntentsService } from '../intents/intents.service';
@@ -27,7 +27,6 @@ export class AppService {
   private readonly logger = new Logger(AppService.name);
   
   // In-memory storage for webhook events (demo purposes only)
-  // In production, use a database
   private webhookEvents = new Map<string, any[]>();
 
   constructor(
@@ -232,73 +231,34 @@ export class AppService {
   /**
    * Verify Webhook HMAC Signature
    * 
-   * This is a critical security measure to ensure webhooks are from Chainrails.
-   * 
-   * How it works:
-   * 1. Chainrails sends: X-Chainrails-Signature header with format "sha256=<hash>"
-   * 2. Chainrails sends: X-Chainrails-Timestamp header with Unix timestamp
-   * 3. We compute: HMAC-SHA256(timestamp + "." + body, webhook_secret)
-   * 4. We compare our computed signature with the received signature
-   * 5. We check timestamp is recent (within 5 minutes) to prevent replay attacks
-   * 
-   * @param payload - The webhook payload body
-   * @param receivedSignature - Signature from X-Chainrails-Signature header
-   * @param timestamp - Timestamp from X-Chainrails-Timestamp header
-   * @returns true if signature is valid, false otherwise
+   * This ensures webhooks are actually from Chainrails and haven't been tampered with.
    */
   private verifyWebhookSignature(
     payload: any,
-    receivedSignature: string,
+    signature: string,
     timestamp: number,
   ): boolean {
-    // Get webhook secret from environment variables
     const webhookSecret = this.configService.get<string>('CHAINRAILS_WEBHOOK_SECRET');
     
     if (!webhookSecret) {
-      this.logger.warn(
-        'CHAINRAILS_WEBHOOK_SECRET not set. Skipping signature verification. ' +
-        'This is OK for development but REQUIRED for production!',
-      );
-      return true; // Allow in development
+      this.logger.warn('CHAINRAILS_WEBHOOK_SECRET not set. Skipping verification (OK for development, but not recommended).');
+      return true;
     }
 
-    // Step 1: Check timestamp to prevent replay attacks
-    // Reject webhooks older than 5 minutes
+    // Check timestamp (prevent replay attacks)
     const now = Math.floor(Date.now() / 1000);
-    const timeDifference = Math.abs(now - timestamp);
-    const MAX_TIMESTAMP_AGE = 300; // 5 minutes in seconds
-
-    if (timeDifference > MAX_TIMESTAMP_AGE) {
-      this.logger.warn(
-        `Webhook timestamp too old. Difference: ${timeDifference}s (max: ${MAX_TIMESTAMP_AGE}s)`,
-      );
+    if (Math.abs(now - timestamp) > 300) { // 5 minutes
       return false;
     }
 
-    // Step 2: Compute the expected signature
-    // Format: HMAC-SHA256(timestamp + "." + JSON.stringify(payload), secret)
-    const payloadString = JSON.stringify(payload);
-    const signedPayload = `${timestamp}.${payloadString}`;
-    
+    // Compute signature
+    const body = JSON.stringify(payload);
+    const message = `${timestamp}.${body}`;
     const hmac = createHmac('sha256', webhookSecret);
-    hmac.update(signedPayload);
-    const computedSignature = `sha256=${hmac.digest('hex')}`;
+    hmac.update(message);
+    const computed = `sha256=${hmac.digest('hex')}`;
 
-    // Step 3: Compare signatures using timing-safe comparison
-    // This prevents timing attacks
-    try {
-      const receivedBuffer = Buffer.from(receivedSignature);
-      const computedBuffer = Buffer.from(computedSignature);
-
-      // Both buffers must be same length
-      if (receivedBuffer.length !== computedBuffer.length) {
-        return false;
-      }
-
-      return timingSafeEqual(receivedBuffer, computedBuffer);
-    } catch (error) {
-      this.logger.error('Error comparing webhook signatures:', error.message);
-      return false;
-    }
+    // Compare
+    return computed === signature;
   }
 }
