@@ -63,8 +63,8 @@ export class AppController {
     @Body('amount') amount: number,
     @Body('tokenIn') tokenIn: string,
     @Body('recipient') recipient: string,
-    @Body('sender') sender?: string,
-    @Body('refundAddress') refundAddress?: string,
+    @Body('sender') sender: string,
+    @Body('refundAddress') refundAddress: string,
     @Body('metadata') metadata?: Record<string, any>,
   ) {
     return this.appService.createTransfer({

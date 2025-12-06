@@ -78,6 +78,8 @@ export class AppService {
           ? 'None (same chain)'
           : quote.bestQuote?.route?.bridgeToUse || 'Auto-selected',
         recommended: isCheapest,
+        tokenIn: quote.bestQuote?.route?.tokenIn || params.tokenOut,
+        amountInSmallestUnit: quote.bestQuote?.amount || 0,
       };
     });
 
@@ -109,8 +111,8 @@ export class AppService {
     amount: number;
     tokenIn: string;
     recipient: string;
-    sender?: string;
-    refundAddress?: string;
+    sender: string;
+    refundAddress: string;
     metadata?: Record<string, any>;
   }) {
     const intent = await this.intentsService.createIntent({
@@ -194,7 +196,7 @@ export class AppService {
    * - Trigger notifications to users
    * - Update your app's state
    * 
-   * Use case: Chainrails notifies you that an intent was funded
+   * NB: You must register your webhook URL in the Chainrails dashboard!
    */
   handleWebhookEvent(
     payload: any,
