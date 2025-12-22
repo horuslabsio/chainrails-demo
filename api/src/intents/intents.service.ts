@@ -51,7 +51,7 @@ export class IntentsService {
    */
   async createIntent(params: {
     sender: string;
-    amount: number;
+    amount: string;
     tokenIn: string;
     sourceChain: string;
     destinationChain: string;

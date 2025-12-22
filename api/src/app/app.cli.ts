@@ -3,6 +3,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { AppService } from './app.service';
+import { formatUnits } from '../utils/formatUnits';
 import * as readline from 'readline';
 
 /**
@@ -140,7 +141,7 @@ class ChainrailsCLI {
     );
 
     const tokenDecimalsStr = await this.prompt(
-      '4️⃣  Token decimals (e.g., 6 for USDC, 18 for most tokens): ',
+      '4️⃣  Token decimals on source chain (e.g., 6 for USDC, 18 for most tokens): ',
     );
 
     const recipient = await this.prompt(
@@ -229,7 +230,7 @@ class ChainrailsCLI {
     const transfer = await this.appService.createTransfer({
       sourceChain: selectedOption.sourceChain,
       destinationChain: input.destinationChain,
-      amount: amountInSmallestUnits,
+      amount: amountInSmallestUnits.toString(),
       tokenIn: selectedOption.tokenIn,
       recipient: input.recipient,
       sender: input.sender,
@@ -240,6 +241,11 @@ class ChainrailsCLI {
     console.log(`   Intent ID: ${transfer.intent.id}`);
     console.log(`   Intent Address: ${transfer.intent.intent_address}`);
     console.log(`   Status: ${transfer.intent.intent_status}\n`);
+
+    // Attach decimals so funding instructions can be shown in human units
+    if (transfer?.fundingInstructions) {
+      (transfer.fundingInstructions as any).tokenDecimals = input.tokenDecimals;
+    }
 
     return transfer;
   }
@@ -255,7 +261,17 @@ class ChainrailsCLI {
     console.log('║' + ' '.repeat(20) + '💰 FUNDING INSTRUCTIONS' + ' '.repeat(25) + '║');
     console.log(boxEnd);
     console.log('');
-    console.log(`📍 Send exactly ${transfer.fundingInstructions.amount} to:`);
+    const amountSmallestUnit = String(transfer.fundingInstructions.amount ?? '0');
+    const tokenDecimals = Number(transfer.fundingInstructions.tokenDecimals);
+    const amountHumanReadable = Number.isFinite(tokenDecimals)
+      ? formatUnits(amountSmallestUnit, tokenDecimals)
+      : undefined;
+
+    console.log(
+      amountHumanReadable
+        ? `📍 Send exactly ${amountHumanReadable} (${amountSmallestUnit} in smallest units) to:`
+        : `📍 Send exactly ${amountSmallestUnit} to:`,
+    );
     console.log(`   ${transfer.fundingInstructions.address}`);
     console.log('');
     console.log(`🌐 Network: ${transfer.fundingInstructions.network}`);
@@ -318,6 +334,9 @@ class ChainrailsCLI {
     if (!isComplete) {
       console.log('\n⏰ Status monitoring timed out.');
       console.log('💡 In production, webhooks will notify you when the transfer completes.');
+
+      console.log('\n🔎 You can continue checking this intent status though with:');
+      console.log(`curl http://localhost:3000/app/status/${intentId}`);
     }
   }
 }

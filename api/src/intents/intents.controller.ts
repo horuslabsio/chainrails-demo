@@ -34,7 +34,7 @@ export class IntentsController {
   @Post()
   async createIntent(
     @Body('sender') sender: string,
-    @Body('amount') amount: number,
+    @Body('amount') amount: string,
     @Body('tokenIn') tokenIn: string,
     @Body('sourceChain') sourceChain: string,
     @Body('destinationChain') destinationChain: string,

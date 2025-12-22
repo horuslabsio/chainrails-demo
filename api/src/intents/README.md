@@ -31,7 +31,7 @@ Alternative outcomes:
 npm run start:dev
 
 # Example 1: Create a cross-chain transfer intent
-curl -X POST http://localhost:3000/intents -H 'Content-Type: application/json' -d '{\"amount\":1000000,\"tokenIn\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"sourceChain\":\"BASE_MAINNET\",\"destinationChain\":\"ARBITRUM_MAINNET\",\"recipient\":\"0xda3ecb2e5362295e2b802669dd47127a61d9ce54\",\"sender\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\",\"refundAddress\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\"}'
+curl -X POST http://localhost:3000/intents -H 'Content-Type: application/json' -d '{\"amount\":\"1000000\",\"tokenIn\":\"0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913\",\"sourceChain\":\"BASE_MAINNET\",\"destinationChain\":\"ARBITRUM_MAINNET\",\"recipient\":\"0xda3ecb2e5362295e2b802669dd47127a61d9ce54\",\"sender\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\",\"refundAddress\":\"0xb79541be080a59fdce6c0b43219ba56c725ec65e\"}'
 
 # Example 2: Get intent status by ID
 curl http://localhost:3000/intents/1
@@ -57,7 +57,7 @@ curl "http://localhost:3000/intents?limit=10&offset=0"
 ```typescript
 const intent = await intentsService.createIntent({
   sender: '0xYourWalletAddress',
-  amount: 1000000,
+  amount: '1000000',
   tokenIn: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
   sourceChain: 'BASE_TESTNET',
   destinationChain: 'ARBITRUM_TESTNET',
@@ -98,7 +98,7 @@ setInterval(checkStatus, 10000);
 ```typescript
 {
   sender: string;           // User's wallet address
-  amount: number;           // INITIAL amount (not including fees)
+  amount: string;           // INITIAL amount (not including fees)
   tokenIn: string;          // Source token address
   sourceChain: string;      // Where tokens are coming from
   destinationChain: string; // Where tokens are going
@@ -116,10 +116,10 @@ setInterval(checkStatus, 10000);
 
 ```typescript
 // ✅ Correct
-amount: 1000000 // User wants to send 1 USDC
+amount: '1000000' // User wants to send 1 USDC
 
 // ❌ Wrong
-amount: 1 // Human readable format!
+amount: '1' // Human readable format!
 ```
 
 ### Expiration Times

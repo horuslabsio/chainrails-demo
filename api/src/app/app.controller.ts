@@ -60,7 +60,7 @@ export class AppController {
   async createTransfer(
     @Body('sourceChain') sourceChain: string,
     @Body('destinationChain') destinationChain: string,
-    @Body('amount') amount: number,
+    @Body('amount') amount: string,
     @Body('tokenIn') tokenIn: string,
     @Body('recipient') recipient: string,
     @Body('sender') sender: string,

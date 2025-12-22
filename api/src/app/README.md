@@ -100,7 +100,7 @@ After user selects their preferred source:
 {
   "sourceChain": "BASE_TESTNET",          // User's choice
   "destinationChain": "ARBITRUM_TESTNET",
-  "amount": 10000000,                     // 10 USDC (in smallest units)
+  "amount": "10000000",                   // 10 USDC (in smallest units)
   "tokenIn": "0x036...",                  // USDC on Base
   "recipient": "0xRecipient..."
 }

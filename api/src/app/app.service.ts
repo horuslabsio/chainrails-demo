@@ -79,7 +79,7 @@ export class AppService {
           : quote.bestQuote?.route?.bridgeToUse || 'Auto-selected',
         recommended: isCheapest,
         tokenIn: quote.bestQuote?.route?.tokenIn || params.tokenOut,
-        amountInSmallestUnit: quote.bestQuote?.amount || 0,
+        amountInSmallestUnit: quote.bestQuote?.amount || '0',
       };
     });
 
@@ -108,7 +108,7 @@ export class AppService {
   async createTransfer(params: {
     sourceChain: string;
     destinationChain: string;
-    amount: number;
+    amount: string;
     tokenIn: string;
     recipient: string;
     sender: string;
