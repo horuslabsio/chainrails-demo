@@ -7,13 +7,12 @@ import CheckIcon from "./icons/Check";
 import NGFlagIcon from "./icons/NGFlag";
 
 Chainrails.config({
-  api_key: import.meta.env.CHAINRAILS_API_KEY,
+  api_key: "cr_live_c4096410e3c600853a85854056e05ffc54479295a58b0acea80709d62c36681e",
 });
 
 export default function App() {
   const cr = usePaymentModal({
     to: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
-    amount: 9.89,
     chain: chains.BASE,
     token: tokens.USDC,
     onSuccess: () => {
@@ -241,7 +240,7 @@ export default function App() {
         </form>
       </section>
 
-      <PaymentModal {...cr} />
+      <PaymentModal {...cr} amount={9.89} />
     </>
   );
 }
