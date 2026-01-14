@@ -1,23 +1,17 @@
 "use client";
 
-import { Chainrails, chains, PaymentModal, tokens, usePaymentModal } from "@chainrails/react";
-import "./App.css";
+import { chains, PaymentModal, tokens, usePaymentSession } from "@chainrails/react";
 import ArrowDownIcon from "./icons/ArrowDown";
 import CheckIcon from "./icons/Check";
 import NGFlagIcon from "./icons/NGFlag";
 
-Chainrails.config({
-  api_key: "cr_live_c4096410e3c600853a85854056e05ffc54479295a58b0acea80709d62c36681e",
-});
-
 export default function App() {
-  const cr = usePaymentModal({
-    to: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
-    chain: chains.BASE,
+  const cr = usePaymentSession({
+    session_url: "http://localhost:4000/session",
+    destinationChain: chains.BASE,
     token: tokens.USDC,
-    onSuccess: () => {
-      console.log("Payment Successful");
-    },
+    recipient: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
+    amount: 9.89,
   });
 
   return (
@@ -240,7 +234,7 @@ export default function App() {
         </form>
       </section>
 
-      <PaymentModal {...cr} amount={9.89} />
+      <PaymentModal {...cr} styles={{ ctaColor: "#0ff" }} />
     </>
   );
 }

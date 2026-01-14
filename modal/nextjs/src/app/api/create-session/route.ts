@@ -5,8 +5,6 @@ export async function POST(request: NextRequest) {
   try {
     const { destinationChain, token, amount, recipient } = await request.json();
 
-    console.log({ api_key: process.env.CHAINRAILS_API_KEY || "" });
-
     Chainrails.config({
       api_key: process.env.CHAINRAILS_API_KEY || "",
       env: "production",

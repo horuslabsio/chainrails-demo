@@ -6,6 +6,7 @@ body {
   margin: 0;
   box-sizing: border-box;
   overscroll-behavior: none;
+  justify-content: center;
 }
 
 #root {
