@@ -5,16 +5,23 @@ export async function POST(request: NextRequest) {
   try {
     const { destinationChain, token, amount, recipient } = await request.json();
 
+    console.log({
+      amount,
+      recipient,
+      destinationChain,
+      token,
+    });
+
     Chainrails.config({
       api_key: process.env.CHAINRAILS_API_KEY || "",
       env: "production",
     });
 
     const session = await crapi.auth.getSessionToken({
-      amount: amount,
-      recipient: recipient,
-      destinationChain: destinationChain,
-      token: token,
+      amount,
+      recipient,
+      destinationChain,
+      token,
     });
 
     return NextResponse.json(session);

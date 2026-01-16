@@ -1,18 +1,34 @@
 "use client";
 
-import { chains, PaymentModal, tokens, usePaymentSession } from "@chainrails/react";
+import { chains, PaymentModal, tokens, usePaymentModal } from "@chainrails/react";
 import ArrowDownIcon from "../icons/ArrowDown";
 import CheckIcon from "../icons/Check";
 import NGFlagIcon from "../icons/NGFlag";
+import { useState } from "react";
 
 export default function Home() {
-  const cr = usePaymentSession({
-    session_url: `${process.env.NEXT_PUBLIC_API_URL}/api/create-session`,
-    destinationChain: chains.BASE,
-    token: tokens.USDC,
-    recipient: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
-    amount: 9.89,
+  const [loading, setLoading] = useState(false);
+  const cr = usePaymentModal({
+    sessionToken: null,
   });
+
+  async function pay() {
+    setLoading(true);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create-session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        destinationChain: chains.BASE,
+        token: tokens.USDC,
+        recipient: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
+        amount: "9.89",
+      }),
+    });
+    const data = await response.json();
+    cr.updateSession(data);
+    cr.open();
+    setLoading(false);
+  }
 
   return (
     <>
@@ -222,11 +238,12 @@ export default function Home() {
 
               <div className="space-y-3">
                 <button
-                  onClick={cr.open}
+                  onClick={pay}
+                  disabled={loading}
                   type="button"
-                  className="bg-black cursor-pointer flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                  className="bg-black cursor-pointer flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 disabled:opacity-75"
                 >
-                  Proceed to Payment
+                  {loading ? "Processing..." : "Proceed to Payment"}
                 </button>
               </div>
             </div>
@@ -234,7 +251,7 @@ export default function Home() {
         </form>
       </section>
 
-      <PaymentModal {...cr} styles={{ ctaColor: "#0ff" }} />
+      <PaymentModal {...cr} />
     </>
   );
 }

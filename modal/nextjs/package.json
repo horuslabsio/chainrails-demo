@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@chainrails/react": "0.1.28",
-    "@chainrails/sdk": "^0.1.0",
+    "@chainrails/react": "0.2.19",
+    "@chainrails/sdk": "^0.2.4",
     "@tailwindcss/postcss": "^4.1.18",
     "next": "^15.1.0",
     "postcss": "^8.5.6",
