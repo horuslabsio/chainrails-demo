@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm:dev:frontend\" \"npm:dev:server\"",
+    "dev:frontend": "vite",
+    "dev:server": "npm --prefix ./server run start",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "install:all": "npm install && npm --prefix ./server install"
   },
   "dependencies": {
-    "@chainrails/react": "0.1.28",
+    "@chainrails/react": "0.2.19",
     "@tailwindcss/vite": "^4.1.17",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
@@ -27,6 +30,7 @@
     "globals": "^16.5.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "concurrently": "^8.2.0"
   }
 }

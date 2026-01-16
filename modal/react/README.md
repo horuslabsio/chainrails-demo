@@ -19,55 +19,37 @@ If you are developing a production application, we recommend updating the config
 export default defineConfig([
   globalIgnores(['dist']),
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+    ## This folder now includes a minimal frontend and backend dev setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+    I've added a tiny Express session server under `server/` and wired the repository scripts so you can run both the Vite frontend and the session server concurrently.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    What I changed
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+    - Added `server/index.js` — an Express app that exposes `/session` using the Chainrails SDK (example server code provided in your request).
+    - Added `server/package.json` and `server/.env.example` for local configuration.
+    - Updated this package's `package.json` to add a `dev` script that runs both the frontend and server concurrently (uses `concurrently`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+    Quick start (in `modal/react`)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    1. Install dependencies for both frontend and server:
+
+    ```bash
+    npm run install:all
+    ```
+
+    2. Copy `server/.env.example` to `server/.env` and set `CHAINRAILS_API_KEY` and `CHAINRAILS_DOMAIN_WHITELIST` (e.g. `http://localhost:5173`).
+
+    3. Run both frontend and server at once:
+
+    ```bash
+    npm run dev
+    ```
+
+    The frontend runs with Vite (default port 5173). The session server runs on port 4000 by default. The demo frontend already points its session URL to `http://localhost:4000/session` and uses the `usePaymentSession` hook.
+
+    Notes
+
+    - The server uses the Chainrails SDK's `crapi.auth.getSessionToken` call. Make sure your `CHAINRAILS_API_KEY` is set in `server/.env` before starting the server.
+    - The server returns whatever the SDK returns from the `getSessionToken` call. In production you should validate inputs and authenticate the requestor.
+
+    If you'd like, I can convert this into a more formal npm workspace layout (moving the frontend into `packages/frontend`) — I kept the existing frontend files in place to minimize churn. 

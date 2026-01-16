@@ -1,17 +1,15 @@
 "use client";
 
-import { chains, PaymentModal, tokens, usePaymentSession } from "@chainrails/react";
+import { PaymentModal, usePaymentSession } from "@chainrails/react";
+import { useState } from "react";
 import ArrowDownIcon from "./icons/ArrowDown";
 import CheckIcon from "./icons/Check";
 import NGFlagIcon from "./icons/NGFlag";
 
 export default function App() {
+  const [loading, setLoading] = useState(false);
   const cr = usePaymentSession({
     session_url: "http://localhost:4000/session",
-    destinationChain: chains.BASE,
-    token: tokens.USDC,
-    recipient: "0x4F41BCf288E718A36c1e6919c2Dfc2E07d51c675",
-    amount: 9.89,
   });
 
   return (
@@ -223,10 +221,11 @@ export default function App() {
               <div className="space-y-3">
                 <button
                   onClick={cr.open}
+                  disabled={loading}
                   type="button"
-                  className="bg-black cursor-pointer flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 "
+                  className="bg-black cursor-pointer flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 disabled:opacity-75"
                 >
-                  Proceed to Payment
+                  {loading ? "Processing..." : "Proceed to Payment"}
                 </button>
               </div>
             </div>
@@ -234,7 +233,7 @@ export default function App() {
         </form>
       </section>
 
-      <PaymentModal {...cr} styles={{ ctaColor: "#0ff" }} />
+      <PaymentModal {...cr} />
     </>
   );
 }
