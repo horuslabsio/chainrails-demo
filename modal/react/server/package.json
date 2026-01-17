@@ -1,0 +1,19 @@
+{
+  "name": "chainrails-session-server-demo",
+  "module": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@chainrails/sdk": "^0.2.4",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6"
+  }
+}
