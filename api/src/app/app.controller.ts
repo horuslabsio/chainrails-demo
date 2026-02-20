@@ -61,6 +61,7 @@ export class AppController {
     @Body('sourceChain') sourceChain: string,
     @Body('destinationChain') destinationChain: string,
     @Body('amount') amount: string,
+    @Body('amountSymbol') amountSymbol: string,
     @Body('tokenIn') tokenIn: string,
     @Body('recipient') recipient: string,
     @Body('sender') sender: string,
@@ -71,6 +72,7 @@ export class AppController {
       sourceChain,
       destinationChain,
       amount,
+      amountSymbol,
       tokenIn,
       recipient,
       sender,
@@ -112,6 +114,9 @@ export class AppController {
     @Headers('x-chainrails-event-type') eventType?: string,
     @Headers('x-chainrails-event-id') eventId?: string,
   ) {
+    console.log(`Received webhook event: ${eventType} (ID: ${eventId}) at ${timestamp}`);
+    console.log('Payload:', JSON.stringify(payload, null, 2));
+    
     // Convert timestamp string to number
     const timestampNumber = parseInt(timestamp, 10);
 

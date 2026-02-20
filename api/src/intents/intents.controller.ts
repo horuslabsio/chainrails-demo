@@ -35,6 +35,7 @@ export class IntentsController {
   async createIntent(
     @Body('sender') sender: string,
     @Body('amount') amount: string,
+    @Body('amountSymbol') amountSymbol: string,
     @Body('tokenIn') tokenIn: string,
     @Body('sourceChain') sourceChain: string,
     @Body('destinationChain') destinationChain: string,
@@ -45,6 +46,7 @@ export class IntentsController {
     return this.intentsService.createIntent({
       sender,
       amount,
+      amountSymbol,
       tokenIn,
       sourceChain,
       destinationChain,

@@ -52,6 +52,7 @@ export class IntentsService {
   async createIntent(params: {
     sender: string;
     amount: string;
+    amountSymbol: string;
     tokenIn: string;
     sourceChain: string;
     destinationChain: string;
@@ -64,10 +65,11 @@ export class IntentsService {
     );
 
     try {
-      // IMPORTANT: amount should be the INITIAL amount (what user wants to send)
+      // IMPORTANT: amount should be the INITIAL amount (what user wants to send), amountSymbol is the denomination of the amount
       const requestBody: any = {
         sender: params.sender,
         amount: params.amount,
+        amountSymbol: params.amountSymbol,
         tokenIn: params.tokenIn,
         source_chain: params.sourceChain,
         destination_chain: params.destinationChain,

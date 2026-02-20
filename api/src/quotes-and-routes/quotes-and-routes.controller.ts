@@ -23,6 +23,7 @@ export class QuotesAndRoutesController {
    * - sourceChain: Source chain (e.g., BASE_TESTNET)
    * - destinationChain: Destination chain (e.g., ARBITRUM_TESTNET)
    * - amount: Amount in smallest token units (e.g., 1000000 for 1 USDC)
+   * - amountSymbol: Denomination of the amount (e.g., "USDC")
    * - bridge: Bridge to use (CCTP, ACROSS, GATEWAY, RHINOFI)
    * 
    * Optional params:
@@ -36,6 +37,7 @@ export class QuotesAndRoutesController {
     @Query('destinationChain') destinationChain: string,
     @Query('amount') amount: string,
     @Query('bridge') bridge: string,
+    @Query('amountSymbol') amountSymbol?: string,
     @Query('recipient') recipient?: string,
   ) {
     return this.quotesAndRoutesService.getSingleQuote({
@@ -44,6 +46,7 @@ export class QuotesAndRoutesController {
       sourceChain,
       destinationChain,
       amount,
+      amountSymbol,
       bridge,
       recipient,
     });
@@ -64,6 +67,7 @@ export class QuotesAndRoutesController {
     @Query('sourceChain') sourceChain: string,
     @Query('destinationChain') destinationChain: string,
     @Query('amount') amount: string,
+    @Query('amountSymbol') amountSymbol?: string,
     @Query('recipient') recipient?: string,
     @Query('excludeBridges') excludeBridges?: string,
   ) {
@@ -73,6 +77,7 @@ export class QuotesAndRoutesController {
       sourceChain,
       destinationChain,
       amount,
+      amountSymbol,
       recipient,
       excludeBridges: excludeBridges?.split(','),
     });
@@ -89,6 +94,7 @@ export class QuotesAndRoutesController {
     @Query('sourceChain') sourceChain: string,
     @Query('destinationChain') destinationChain: string,
     @Query('amount') amount: string,
+    @Query('amountSymbol') amountSymbol?: string,
     @Query('recipient') recipient?: string,
     @Query('excludeBridges') excludeBridges?: string,
   ) {
@@ -98,6 +104,7 @@ export class QuotesAndRoutesController {
       sourceChain,
       destinationChain,
       amount,
+      amountSymbol,
       recipient,
       excludeBridges: excludeBridges?.split(','),
     });
@@ -114,6 +121,7 @@ export class QuotesAndRoutesController {
     @Query('sourceChain') sourceChain: string,
     @Query('destinationChain') destinationChain: string,
     @Query('amount') amount: string,
+    @Query('amountSymbol') amountSymbol?: string,
     @Query('recipient') recipient?: string,
   ) {
     return this.quotesAndRoutesService.findOptimalRoute({
@@ -122,6 +130,7 @@ export class QuotesAndRoutesController {
       sourceChain,
       destinationChain,
       amount,
+      amountSymbol,
       recipient,
     });
   }

@@ -47,6 +47,7 @@ export class QuotesAndRoutesService {
     sourceChain: string;
     destinationChain: string;
     amount: string;
+    amountSymbol?: string;
     bridge: string;
     recipient?: string;
   }) {
@@ -61,6 +62,7 @@ export class QuotesAndRoutesService {
         sourceChain: params.sourceChain,
         destinationChain: params.destinationChain,
         amount: params.amount,
+        ...(params.amountSymbol && { amountSymbol: params.amountSymbol }),
         bridge: params.bridge,
         ...(params.recipient && { recipient: params.recipient }),
       });
@@ -109,6 +111,7 @@ export class QuotesAndRoutesService {
     sourceChain: string;
     destinationChain: string;
     amount: string;
+    amountSymbol?: string;
     recipient?: string;
     excludeBridges?: string[];
   }) {
@@ -124,6 +127,7 @@ export class QuotesAndRoutesService {
         sourceChain: params.sourceChain,
         destinationChain: params.destinationChain,
         amount: params.amount,
+        ...(params.amountSymbol && { amountSymbol: params.amountSymbol }),
         ...(params.recipient && { recipient: params.recipient }),
         ...(params.excludeBridges && {
           excludeBridges: params.excludeBridges.join(','),
@@ -169,6 +173,7 @@ export class QuotesAndRoutesService {
     sourceChain: string;
     destinationChain: string;
     amount: string;
+    amountSymbol?: string;
     recipient?: string;
     excludeBridges?: string[];
   }) {
@@ -183,6 +188,7 @@ export class QuotesAndRoutesService {
         sourceChain: params.sourceChain,
         destinationChain: params.destinationChain,
         amount: params.amount,
+        ...(params.amountSymbol && { amountSymbol: params.amountSymbol }),
         ...(params.recipient && { recipient: params.recipient }),
         ...(params.excludeBridges && {
           excludeBridges: params.excludeBridges.join(','),
@@ -231,6 +237,7 @@ export class QuotesAndRoutesService {
     sourceChain: string;
     destinationChain: string;
     amount: string;
+    amountSymbol?: string;
     recipient?: string;
   }) {
     this.logger.log(
@@ -244,6 +251,7 @@ export class QuotesAndRoutesService {
         sourceChain: params.sourceChain,
         destinationChain: params.destinationChain,
         amount: params.amount,
+        ...(params.amountSymbol && { amountSymbol: params.amountSymbol }),
         ...(params.recipient && { recipient: params.recipient }),
       });
 

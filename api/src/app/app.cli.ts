@@ -3,15 +3,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { AppService } from './app.service';
-import { formatUnits } from '../utils/formatUnits';
 import * as readline from 'readline';
 
 /**
  * CHAINRAILS INTERACTIVE DEMO CLI - YOU DO NOT NEED TO MODIFY/STUDY THIS FILE
  * 
  * This interactive CLI demonstrates the complete Chainrails transfer flow:
- * 1. Get transfer options (shows all possible source chains)
- * 2. Select your preferred source chain
+ * 1. Get transfer options (shows all possible source chains and payment tokens)
+ * 2. Select your preferred source chain and payment token
  * 3. Create the transfer intent
  * 4. Display funding instructions
  * 5. Wait for webhook events and show status updates
@@ -23,7 +22,6 @@ interface UserInput {
   destinationChain: string;
   amount: string;
   tokenOut: string;
-  tokenDecimals: number;
   recipient: string;
   sender: string;
   refundAddress: string;
@@ -89,8 +87,8 @@ class ChainrailsCLI {
       this.section('STEP 1: Getting Transfer Options');
       const options = await this.getTransferOptions(input);
 
-      // Step 3: Let user select source
-      this.section('STEP 2: Select Source Chain');
+      // Step 3: Let user select source chain and token
+      this.section('STEP 2: Select Source Chain and Payment Token');
       const selectedOption = await this.selectSource(options.options);
 
       // Step 4: Create transfer
@@ -124,7 +122,7 @@ class ChainrailsCLI {
     console.log('Let\'s set up your transfer. You\'ll need:\n');
     console.log('  • Destination chain (where tokens are going)');
     console.log('  • Amount to transfer');
-    console.log('  • Token address and decimals');
+    console.log('  • Token address on destination');
     console.log('  • Recipient address');
     console.log('  • Sender address (your wallet)\n');
 
@@ -140,16 +138,12 @@ class ChainrailsCLI {
       '3️⃣  Token address on destination: ',
     );
 
-    const tokenDecimalsStr = await this.prompt(
-      '4️⃣  Token decimals on source chain (e.g., 6 for USDC, 18 for most tokens): ',
-    );
-
     const recipient = await this.prompt(
-      '5️⃣  Recipient address: ',
+      '4️⃣  Recipient address: ',
     );
 
     const sender = await this.prompt(
-      '6️⃣  Sender address (your wallet): ',
+      '5️⃣  Sender address (your wallet): ',
     );
 
     const senderFinal = sender || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb7';
@@ -160,7 +154,6 @@ class ChainrailsCLI {
       destinationChain: destinationChain || 'ARBITRUM_TESTNET',
       amount: amount || '10',
       tokenOut: tokenOut || '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
-      tokenDecimals: parseInt(tokenDecimalsStr, 10) || 6,
       recipient: recipient || '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb7',
       sender: senderFinal,
       refundAddress: senderFinal,
@@ -185,11 +178,12 @@ class ChainrailsCLI {
     // Display options in a table format
     options.options.forEach((option) => {
       const prefix = option.recommended ? '⭐' : '  ';
-      const tag = option.recommended ? ' (CHEAPEST)' : '';
-      console.log(`${prefix} ${option.index}. ${option.sourceChain}${tag}`);
+      const tag = option.recommended ? ' (CHEAP)' : '';
+      console.log(`${prefix} ${option.index}. ${option.sourceChain} - ${option.token}${tag}`);
       console.log(`     Type: ${option.type}`);
       console.log(`     Fee: ${option.feeFormatted} USDC`);
       console.log(`     Bridge: ${option.bridge}`);
+      console.log(`     Deposit: ${option.depositAmountFormatted} ${option.token}`);
       console.log('');
     });
 
@@ -197,11 +191,11 @@ class ChainrailsCLI {
   }
 
   /**
-   * Lets user select a source chain
+   * Lets user select a source chain and token
    */
   private async selectSource(options: any[]): Promise<any> {
     const selection = await this.prompt(
-      `Select source chain (1-${options.length}): `,
+      `Select source chain and token (1-${options.length}): `,
     );
 
     const index = parseInt(selection, 10) - 1;
@@ -211,9 +205,8 @@ class ChainrailsCLI {
     }
 
     const selected = options[index];
-    console.log(`\n✅ Selected: ${selected.sourceChain}`);
-    console.log(`   Fee: ${selected.feeFormatted} USDC`);
-    console.log(`   Type: ${selected.type}\n`);
+    console.log(`\n✅ Selected: ${selected.sourceChain} - ${selected.token}`);
+    console.log(`   Type: ${selected.type}`);
 
     return selected;
   }
@@ -224,14 +217,16 @@ class ChainrailsCLI {
   private async createTransfer(input: UserInput, selectedOption: any) {
     console.log('📝 Creating transfer intent...\n');
 
-    // Convert amount to smallest units using token decimals
-    const amountInSmallestUnits = parseFloat(input.amount) * Math.pow(10, input.tokenDecimals);
+    // Use the deposit amount from the selected payment option
+    // This already includes fees and slippage
+    const amountSymbol = selectedOption.token || 'USDC';
 
     const transfer = await this.appService.createTransfer({
       sourceChain: selectedOption.sourceChain,
       destinationChain: input.destinationChain,
-      amount: amountInSmallestUnits.toString(),
-      tokenIn: selectedOption.tokenIn,
+      amount: selectedOption.depositAmount,
+      amountSymbol,
+      tokenIn: selectedOption.tokenAddress,
       recipient: input.recipient,
       sender: input.sender,
       refundAddress: input.refundAddress,
@@ -241,11 +236,6 @@ class ChainrailsCLI {
     console.log(`   Intent ID: ${transfer.intent.id}`);
     console.log(`   Intent Address: ${transfer.intent.intent_address}`);
     console.log(`   Status: ${transfer.intent.intent_status}\n`);
-
-    // Attach decimals so funding instructions can be shown in human units
-    if (transfer?.fundingInstructions) {
-      (transfer.fundingInstructions as any).tokenDecimals = input.tokenDecimals;
-    }
 
     return transfer;
   }
@@ -262,15 +252,9 @@ class ChainrailsCLI {
     console.log(boxEnd);
     console.log('');
     const amountSmallestUnit = String(transfer.fundingInstructions.amount ?? '0');
-    const tokenDecimals = Number(transfer.fundingInstructions.tokenDecimals);
-    const amountHumanReadable = Number.isFinite(tokenDecimals)
-      ? formatUnits(amountSmallestUnit, tokenDecimals)
-      : undefined;
 
     console.log(
-      amountHumanReadable
-        ? `📍 Send exactly ${amountHumanReadable} (${amountSmallestUnit} in smallest units) to:`
-        : `📍 Send exactly ${amountSmallestUnit} to:`,
+      `📍 Send exactly ${amountSmallestUnit} in smallest units to:`
     );
     console.log(`   ${transfer.fundingInstructions.address}`);
     console.log('');

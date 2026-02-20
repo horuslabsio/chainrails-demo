@@ -63,31 +63,61 @@ export class AppService {
       recipient: params.recipient,
     });
 
-    // Format for user presentation
-    const options = multiSourceQuotes.quotes.map((quote, index) => {
-      const isSameChain = quote.sourceChain === params.destinationChain;
-      const isCheapest = index === 0; // First one is cheapest (already sorted)
+    // Flatten options: each quote can have multiple payment options
+    // Create a separate option for each chain+token combination
+    const options = [];
+    let optionIndex = 1;
+    let cheapestOption = null;
+    let lowestFee = Infinity;
 
-      return {
-        index: index + 1,
-        sourceChain: quote.sourceChain,
-        type: isSameChain ? 'same-chain' : 'cross-chain',
-        fee: quote.bestQuote?.totalFee || '0',
-        feeFormatted: quote.bestQuote?.totalFeeFormatted || '0',
-        bridge: isSameChain
-          ? 'None (same chain)'
-          : quote.bestQuote?.route?.bridgeToUse || 'Auto-selected',
-        recommended: isCheapest,
-        tokenIn: quote.bestQuote?.route?.tokenIn || params.tokenOut,
-        amountInSmallestUnit: quote.bestQuote?.amount || '0',
-      };
+    multiSourceQuotes.quotes.forEach((quote) => {
+      const isSameChain = quote.sourceChain === params.destinationChain;
+      const bridgeType = isSameChain ? 'None (same chain)' : quote.bridge || 'Auto-selected';
+
+      // Each payment option becomes a selectable choice
+      quote.paymentOptions.forEach((paymentOption) => {
+        const feeNum = parseFloat(quote.totalFee || '0');
+        const isCurrentCheapest = feeNum < lowestFee;
+        
+        if (isCurrentCheapest) {
+          lowestFee = feeNum;
+        }
+
+        const option = {
+          index: optionIndex++,
+          sourceChain: quote.sourceChain,
+          type: isSameChain ? 'same-chain' : 'cross-chain',
+          fee: quote.totalFee || '0',
+          feeFormatted: quote.totalFeeFormatted || '0',
+          bridge: bridgeType,
+          token: paymentOption.token,
+          tokenAddress: paymentOption.tokenAddress,
+          depositAmount: paymentOption.depositAmount,
+          depositAmountFormatted: paymentOption.depositAmountFormatted,
+          slippage: paymentOption.slippage,
+          recommended: false,
+        };
+
+        options.push(option);
+
+        if (isCurrentCheapest) {
+          cheapestOption = option;
+        }
+      });
+    });
+
+    // Mark the cheapest option(s)
+    options.forEach((opt) => {
+      if (parseFloat(opt.fee) === lowestFee) {
+        opt.recommended = true;
+      }
     });
 
     return {
       destinationChain: params.destinationChain,
       amount: params.amount,
       options,
-      cheapestOption: options[0],
+      cheapestOption,
       totalOptions: options.length,
     };
   }
@@ -109,6 +139,7 @@ export class AppService {
     sourceChain: string;
     destinationChain: string;
     amount: string;
+    amountSymbol: string;
     tokenIn: string;
     recipient: string;
     sender: string;
@@ -118,6 +149,7 @@ export class AppService {
     const intent = await this.intentsService.createIntent({
       sender: params.sender,
       amount: params.amount,
+      amountSymbol: params.amountSymbol,
       tokenIn: params.tokenIn,
       sourceChain: params.sourceChain,
       destinationChain: params.destinationChain,
@@ -136,7 +168,7 @@ export class AppService {
       intent,
       fundingInstructions: {
         address: intent.intent_address,
-        amount: intent.totalAmount,
+        amount: intent.total_amount_in_asset_token,
         network: params.sourceChain,
         deadline: intent.expires_at,
       },
