@@ -36,7 +36,7 @@ export default function Index() {
     >
       <Text>Hii, stranger</Text>
       <Button onPress={pay} title={loading ? "Loading..." : "Buy me a Coffee"} />
-      <PaymentModal {...cr} env={"internal"} isPending={loading} />
+      <PaymentModal {...cr} isPending={loading} />
     </View>
   );
 }
