@@ -6,7 +6,6 @@ import {
   usePaymentModal,
   type Chain,
 } from "@chainrails/react";
-import { useConfig } from "wagmi";
 
 const AMOUNT = "0.1";
 
@@ -18,8 +17,6 @@ function App() {
   useEffect(() => {
     sdk.actions.ready();
   }, []);
-
-  const wagmiConfig = useConfig();
 
   const [recipient, setRecipient] = useState(
     "0xda3ecb2e5362295e2b802669dd47127a61d9ce54",
@@ -45,8 +42,6 @@ function App() {
         `Payment Successful\nTransaction Hash: ${result?.transactionHash ?? "n/a"}\n`,
       );
     },
-    farcasterMiniApp: true,
-    wagmiConfig,
   });
 
   async function pay() {
